@@ -185,6 +185,12 @@ def prediction(card, orientation, category="ภาพรวม", position="", pe
     return frame + outlook + (f"\n{lens}" if lens else ""), advice
 
 
+def text_box(text):
+    """Native Discord shaded box without syntax highlighting."""
+    clean = str(text).replace(chr(96), "ˋ").strip()
+    return "```\n" + clean + "\n```"
+
+
 def add_reading_fields(pages, name, value):
     """Keep each private message below Discord's embed/field text limits."""
     if len(name) > 256 or len(value) > 1024:
@@ -407,9 +413,9 @@ async def duang(interaction: discord.Interaction,
                      f"{tarot.orientation_label(orientation)}"),
         color=PURPLE if orientation == "upright" else REVERSED_COLOR,
     )
-    embed.add_field(name="📖 ความหมายไพ่", value=card_meaning(card, orientation), inline=False)
-    embed.add_field(name="🔮 คำทำนาย", value=outlook, inline=False)
-    embed.add_field(name="💡 คำแนะนำ", value=advice, inline=False)
+    embed.add_field(name="📖 ความหมายไพ่", value=text_box(card_meaning(card, orientation)), inline=False)
+    embed.add_field(name="🔮 คำทำนาย", value=text_box(outlook), inline=False)
+    embed.add_field(name="💡 คำแนะนำ", value=text_box(advice), inline=False)
     embed.set_footer(text=FOOTER_TEXT)
     await send_reading(interaction, embed, [(card, orientation)])
 
@@ -441,9 +447,9 @@ async def open_cards(interaction: discord.Interaction,
             pages,
             name=(f"{index}. {position} — {card_names(card)} "
                   f"({tarot.orientation_label(orientation)})"),
-            value=(f"📖 **ความหมายไพ่:** {card_meaning(card, orientation)}\n\n"
-                   f"🔮 **คำทำนาย:** {outlook}\n\n"
-                   f"💡 **คำแนะนำ:** {advice}"),
+            value=(f"📖 **ความหมายไพ่**\n{text_box(card_meaning(card, orientation))}\n"
+                   f"🔮 **คำทำนาย**\n{text_box(outlook)}\n"
+                   f"💡 **คำแนะนำ**\n{text_box(advice)}"),
         )
     await send_reading(interaction, pages, drawn)
 
