@@ -1,0 +1,470 @@
+[
+  {
+    "name_en": "The Fool",
+    "sheet": "sheet_01.png",
+    "row": 0,
+    "column": 0
+  },
+  {
+    "name_en": "The Magician",
+    "sheet": "sheet_01.png",
+    "row": 0,
+    "column": 1
+  },
+  {
+    "name_en": "The High Priestess",
+    "sheet": "sheet_01.png",
+    "row": 0,
+    "column": 2
+  },
+  {
+    "name_en": "The Empress",
+    "sheet": "sheet_01.png",
+    "row": 1,
+    "column": 0
+  },
+  {
+    "name_en": "The Emperor",
+    "sheet": "sheet_01.png",
+    "row": 1,
+    "column": 1
+  },
+  {
+    "name_en": "The Hierophant",
+    "sheet": "sheet_01.png",
+    "row": 1,
+    "column": 2
+  },
+  {
+    "name_en": "The Lovers",
+    "sheet": "sheet_02.png",
+    "row": 0,
+    "column": 0
+  },
+  {
+    "name_en": "The Chariot",
+    "sheet": "sheet_02.png",
+    "row": 0,
+    "column": 1
+  },
+  {
+    "name_en": "Strength",
+    "sheet": "sheet_02.png",
+    "row": 0,
+    "column": 2
+  },
+  {
+    "name_en": "The Hermit",
+    "sheet": "sheet_02.png",
+    "row": 1,
+    "column": 0
+  },
+  {
+    "name_en": "Wheel of Fortune",
+    "sheet": "sheet_02.png",
+    "row": 1,
+    "column": 1
+  },
+  {
+    "name_en": "Justice",
+    "sheet": "sheet_02.png",
+    "row": 1,
+    "column": 2
+  },
+  {
+    "name_en": "The Hanged Man",
+    "sheet": "sheet_03.png",
+    "row": 0,
+    "column": 0
+  },
+  {
+    "name_en": "Death",
+    "sheet": "sheet_03.png",
+    "row": 0,
+    "column": 1
+  },
+  {
+    "name_en": "Temperance",
+    "sheet": "sheet_03.png",
+    "row": 0,
+    "column": 2
+  },
+  {
+    "name_en": "The Devil",
+    "sheet": "sheet_03.png",
+    "row": 1,
+    "column": 0
+  },
+  {
+    "name_en": "The Tower",
+    "sheet": "sheet_03.png",
+    "row": 1,
+    "column": 1
+  },
+  {
+    "name_en": "The Star",
+    "sheet": "sheet_03.png",
+    "row": 1,
+    "column": 2
+  },
+  {
+    "name_en": "The Moon",
+    "sheet": "sheet_04.png",
+    "row": 0,
+    "column": 0
+  },
+  {
+    "name_en": "The Sun",
+    "sheet": "sheet_04.png",
+    "row": 0,
+    "column": 1
+  },
+  {
+    "name_en": "Judgement",
+    "sheet": "sheet_04.png",
+    "row": 0,
+    "column": 2
+  },
+  {
+    "name_en": "The World",
+    "sheet": "sheet_04.png",
+    "row": 1,
+    "column": 0
+  },
+  {
+    "name_en": "Ace of Wands",
+    "sheet": "sheet_04.png",
+    "row": 1,
+    "column": 1
+  },
+  {
+    "name_en": "2 of Wands",
+    "sheet": "sheet_04.png",
+    "row": 1,
+    "column": 2
+  },
+  {
+    "name_en": "3 of Wands",
+    "sheet": "sheet_05.png",
+    "row": 0,
+    "column": 0
+  },
+  {
+    "name_en": "4 of Wands",
+    "sheet": "sheet_05.png",
+    "row": 0,
+    "column": 1
+  },
+  {
+    "name_en": "5 of Wands",
+    "sheet": "sheet_05.png",
+    "row": 0,
+    "column": 2
+  },
+  {
+    "name_en": "6 of Wands",
+    "sheet": "sheet_05.png",
+    "row": 1,
+    "column": 0
+  },
+  {
+    "name_en": "7 of Wands",
+    "sheet": "sheet_05.png",
+    "row": 1,
+    "column": 1
+  },
+  {
+    "name_en": "8 of Wands",
+    "sheet": "sheet_05.png",
+    "row": 1,
+    "column": 2
+  },
+  {
+    "name_en": "9 of Wands",
+    "sheet": "sheet_06.png",
+    "row": 0,
+    "column": 0
+  },
+  {
+    "name_en": "10 of Wands",
+    "sheet": "sheet_06.png",
+    "row": 0,
+    "column": 1
+  },
+  {
+    "name_en": "Page of Wands",
+    "sheet": "sheet_06.png",
+    "row": 0,
+    "column": 2
+  },
+  {
+    "name_en": "Knight of Wands",
+    "sheet": "sheet_06.png",
+    "row": 1,
+    "column": 0
+  },
+  {
+    "name_en": "Queen of Wands",
+    "sheet": "sheet_06.png",
+    "row": 1,
+    "column": 1
+  },
+  {
+    "name_en": "King of Wands",
+    "sheet": "sheet_06.png",
+    "row": 1,
+    "column": 2
+  },
+  {
+    "name_en": "Ace of Cups",
+    "sheet": "sheet_07.png",
+    "row": 0,
+    "column": 0
+  },
+  {
+    "name_en": "2 of Cups",
+    "sheet": "sheet_07.png",
+    "row": 0,
+    "column": 1
+  },
+  {
+    "name_en": "3 of Cups",
+    "sheet": "sheet_07.png",
+    "row": 0,
+    "column": 2
+  },
+  {
+    "name_en": "4 of Cups",
+    "sheet": "sheet_07.png",
+    "row": 1,
+    "column": 0
+  },
+  {
+    "name_en": "5 of Cups",
+    "sheet": "sheet_07.png",
+    "row": 1,
+    "column": 1
+  },
+  {
+    "name_en": "6 of Cups",
+    "sheet": "sheet_07.png",
+    "row": 1,
+    "column": 2
+  },
+  {
+    "name_en": "7 of Cups",
+    "sheet": "sheet_08.png",
+    "row": 0,
+    "column": 0
+  },
+  {
+    "name_en": "8 of Cups",
+    "sheet": "sheet_08.png",
+    "row": 0,
+    "column": 1
+  },
+  {
+    "name_en": "9 of Cups",
+    "sheet": "sheet_08.png",
+    "row": 0,
+    "column": 2
+  },
+  {
+    "name_en": "10 of Cups",
+    "sheet": "sheet_08.png",
+    "row": 1,
+    "column": 0
+  },
+  {
+    "name_en": "Page of Cups",
+    "sheet": "sheet_08.png",
+    "row": 1,
+    "column": 1
+  },
+  {
+    "name_en": "Knight of Cups",
+    "sheet": "sheet_08.png",
+    "row": 1,
+    "column": 2
+  },
+  {
+    "name_en": "Queen of Cups",
+    "sheet": "sheet_09.png",
+    "row": 0,
+    "column": 0
+  },
+  {
+    "name_en": "King of Cups",
+    "sheet": "sheet_09.png",
+    "row": 0,
+    "column": 1
+  },
+  {
+    "name_en": "Ace of Swords",
+    "sheet": "sheet_09.png",
+    "row": 0,
+    "column": 2
+  },
+  {
+    "name_en": "2 of Swords",
+    "sheet": "sheet_09.png",
+    "row": 1,
+    "column": 0
+  },
+  {
+    "name_en": "3 of Swords",
+    "sheet": "sheet_09.png",
+    "row": 1,
+    "column": 1
+  },
+  {
+    "name_en": "4 of Swords",
+    "sheet": "sheet_09.png",
+    "row": 1,
+    "column": 2
+  },
+  {
+    "name_en": "5 of Swords",
+    "sheet": "sheet_10.png",
+    "row": 0,
+    "column": 0
+  },
+  {
+    "name_en": "6 of Swords",
+    "sheet": "sheet_10.png",
+    "row": 0,
+    "column": 1
+  },
+  {
+    "name_en": "7 of Swords",
+    "sheet": "sheet_10.png",
+    "row": 0,
+    "column": 2
+  },
+  {
+    "name_en": "8 of Swords",
+    "sheet": "sheet_10.png",
+    "row": 1,
+    "column": 0
+  },
+  {
+    "name_en": "9 of Swords",
+    "sheet": "sheet_10.png",
+    "row": 1,
+    "column": 1
+  },
+  {
+    "name_en": "10 of Swords",
+    "sheet": "sheet_10.png",
+    "row": 1,
+    "column": 2
+  },
+  {
+    "name_en": "Page of Swords",
+    "sheet": "sheet_11.png",
+    "row": 0,
+    "column": 0
+  },
+  {
+    "name_en": "Knight of Swords",
+    "sheet": "sheet_11.png",
+    "row": 0,
+    "column": 1
+  },
+  {
+    "name_en": "Queen of Swords",
+    "sheet": "sheet_11.png",
+    "row": 0,
+    "column": 2
+  },
+  {
+    "name_en": "King of Swords",
+    "sheet": "sheet_11.png",
+    "row": 1,
+    "column": 0
+  },
+  {
+    "name_en": "Ace of Pentacles",
+    "sheet": "sheet_11.png",
+    "row": 1,
+    "column": 1
+  },
+  {
+    "name_en": "2 of Pentacles",
+    "sheet": "sheet_11.png",
+    "row": 1,
+    "column": 2
+  },
+  {
+    "name_en": "3 of Pentacles",
+    "sheet": "sheet_12.png",
+    "row": 0,
+    "column": 0
+  },
+  {
+    "name_en": "4 of Pentacles",
+    "sheet": "sheet_12.png",
+    "row": 0,
+    "column": 1
+  },
+  {
+    "name_en": "5 of Pentacles",
+    "sheet": "sheet_12.png",
+    "row": 0,
+    "column": 2
+  },
+  {
+    "name_en": "6 of Pentacles",
+    "sheet": "sheet_12.png",
+    "row": 1,
+    "column": 0
+  },
+  {
+    "name_en": "7 of Pentacles",
+    "sheet": "sheet_12.png",
+    "row": 1,
+    "column": 1
+  },
+  {
+    "name_en": "8 of Pentacles",
+    "sheet": "sheet_12.png",
+    "row": 1,
+    "column": 2
+  },
+  {
+    "name_en": "9 of Pentacles",
+    "sheet": "sheet_13.png",
+    "row": 0,
+    "column": 0
+  },
+  {
+    "name_en": "10 of Pentacles",
+    "sheet": "sheet_13.png",
+    "row": 0,
+    "column": 1
+  },
+  {
+    "name_en": "Page of Pentacles",
+    "sheet": "sheet_13.png",
+    "row": 0,
+    "column": 2
+  },
+  {
+    "name_en": "Knight of Pentacles",
+    "sheet": "sheet_13.png",
+    "row": 1,
+    "column": 0
+  },
+  {
+    "name_en": "Queen of Pentacles",
+    "sheet": "sheet_13.png",
+    "row": 1,
+    "column": 1
+  },
+  {
+    "name_en": "King of Pentacles",
+    "sheet": "sheet_13.png",
+    "row": 1,
+    "column": 2
+  }
+]
