@@ -409,8 +409,8 @@ async def duang(interaction: discord.Interaction,
     emoji = tarot.CATEGORY_INFO.get(category, {}).get("emoji", "🔮")
     embed = discord.Embed(
         title=f"{emoji} ดวง{period} — {category}",
-        description=(f"{card['emoji']} **{card_names(card)}**\n"
-                     f"{tarot.orientation_label(orientation)}"),
+        description=(f"{card['emoji']} **{card_names(card)} "
+                     f"({tarot.orientation_label(orientation)})**"),
         color=PURPLE if orientation == "upright" else REVERSED_COLOR,
     )
     embed.add_field(name="📖 ความหมายไพ่", value=text_box(card_meaning(card, orientation)), inline=False)
