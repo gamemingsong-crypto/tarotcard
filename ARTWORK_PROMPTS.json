@@ -1,0 +1,44 @@
+{
+  "tool": "built-in image_gen",
+  "style_reference": "sheet_01.png",
+  "base_prompt": "Use attached image ONLY as the exact visual style reference for a matching original tarot deck. Generate a NEW sheet of SIX DIFFERENT cards, perfectly aligned 3 columns x 2 rows square contact sheet, equal narrow black gutters, each card full portrait 2:3 with the identical thin ornate silver/violet floral gothic frame, tiny crescents, black title plaques, ivory readable uppercase serif English titles and top Roman numerals. Deep black/plum/violet/lavender/ivory palette, black and white cats only as characters, intricate hand-painted engraving illustration, elegant mystical storybook. No humans, no duplicate cards, no extra text other than specified titles/numerals. ",
+  "major_arcana": "Sheets 1–4: Major Arcana 0–21, then Ace and Two of Wands. Original black-and-white cat tarot illustrations in purple/black, 3 columns by 2 rows.",
+  "sheets_5_to_13": [
+    [
+      5,
+      "THREE OF WANDS: black cat watches ships from cliff with exactly 3 wooden wands; FOUR OF WANDS: two joyful cats beneath garland supported by exactly 4 wands; FIVE OF WANDS: 5 playful rival cats with 5 wands; SIX OF WANDS: white cat on horse with victorious laurel, 6 wands; SEVEN OF WANDS: black cat defending hill with 1 wand facing 6 below, total 7; EIGHT OF WANDS: 8 wooden wands flying diagonally over valley, black and white cats watching."
+    ],
+    [
+      6,
+      "NINE OF WANDS: resilient white cat holding 1 wand before fence of 8, total 9; TEN OF WANDS: black cat carrying bundle of 10 wooden wands toward village; PAGE OF WANDS: curious white kitten examines budding wand in desert; KNIGHT OF WANDS: armored black cat on rearing horse with fiery violet wand; QUEEN OF WANDS: regal white cat on sunflower throne holding wand, small black kitten companion; KING OF WANDS: commanding black cat on salamander throne holding flowering wand."
+    ],
+    [
+      7,
+      "ACE OF CUPS: white cat beside a single overflowing silver chalice with five streams and dove; TWO OF CUPS: black and white cat exchanging exactly 2 chalices beneath winged caduceus; THREE OF CUPS: three joyful black/white cats raise exactly 3 chalices in garden; FOUR OF CUPS: contemplative black cat under tree, 3 cups on ground plus 1 offered by cloud; FIVE OF CUPS: cloaked black cat with 3 spilled cups and 2 upright behind, total 5; SIX OF CUPS: white kitten offers cup of flowers to black kitten in courtyard with total 6 flower-filled cups."
+    ],
+    [
+      8,
+      "SEVEN OF CUPS: black cat contemplates exactly 7 floating silver cups each containing different symbolic possibilities in clouds; EIGHT OF CUPS: cloaked white cat walks toward mountains away from exactly 8 stacked cups under crescent; NINE OF CUPS: contented black cat seated before curved display of exactly 9 silver cups; TEN OF CUPS: happy black and white cat family under rainbow bearing exactly 10 cups; PAGE OF CUPS: curious white kitten holding chalice containing small fish at shore; KNIGHT OF CUPS: romantic armored white cat riding horse slowly, offering chalice."
+    ],
+    [
+      9,
+      "QUEEN OF CUPS: contemplative white cat on seashell throne beside sea holding ornate covered chalice; KING OF CUPS: calm black cat on throne above ocean holding cup and sceptre; ACE OF SWORDS: white cat watches a single upright silver sword emerge from cloud through crown; TWO OF SWORDS: blindfolded white cat on stone bench holding exactly 2 crossed swords under moon; THREE OF SWORDS: symbolic purple crystal heart pierced by exactly 3 silver swords against rainclouds, black and white cats below, no blood; FOUR OF SWORDS: white cat resting peacefully on stone bed in chapel, 3 swords on wall and 1 beneath, total 4."
+    ],
+    [
+      10,
+      "FIVE OF SWORDS: black cat gathers 3 swords with 2 on ground as two cats walk away, exactly 5; SIX OF SWORDS: boat carries black and white cats across calm water with exactly 6 upright swords; SEVEN OF SWORDS: sly black cat carrying 5 swords away from camp with 2 left behind, total 7; EIGHT OF SWORDS: white cat loosely bound and blindfolded within exactly 8 planted swords, open escape path, no wounds; NINE OF SWORDS: black cat awake worried on bed with exactly 9 horizontal swords on wall; TEN OF SWORDS: black cat lying asleep beside fallen dark cloak pinned by exactly 10 swords, distant purple dawn, symbolic ending, no injury or gore."
+    ],
+    [
+      11,
+      "PAGE OF SWORDS: alert white kitten on windy hill holding upright sword; KNIGHT OF SWORDS: armored black cat gallops on white horse with raised sword; QUEEN OF SWORDS: wise white cat on cloud-carved throne holding vertical sword and extending welcoming paw; KING OF SWORDS: authoritative black cat on butterfly-carved throne holding straight sword; ACE OF PENTACLES: white cat beneath a single large silver pentacle coin offered from cloud above lush garden; TWO OF PENTACLES: playful black cat juggles exactly 2 pentacle coins linked by violet infinity ribbon by sea."
+    ],
+    [
+      12,
+      "THREE OF PENTACLES: black cat artisan working in cathedral with two white cat observers and exactly 3 pentacle coins carved above; FOUR OF PENTACLES: black cat holds 1 coin, 1 atop head, 2 under paws, exactly 4 coins; FIVE OF PENTACLES: black and white cats walking together through snow outside warmly lit stained-glass window with exactly 5 pentacle coins; SIX OF PENTACLES: generous white cat sharing coins with two black cats, balanced scales and exactly 6 prominent pentacle coins; SEVEN OF PENTACLES: patient black cat leaning on gardening tool observing vine with exactly 7 pentacle coins; EIGHT OF PENTACLES: white cat craftsman carefully engraving coin at bench, exactly 8 pentacle coins visible across workbench and wall."
+    ],
+    [
+      13,
+      "NINE OF PENTACLES: elegant white cat in lush vineyard with falcon companion and exactly 9 pentacle coins arranged among vines; TEN OF PENTACLES: multigenerational black and white cat family beneath ancestral arch decorated with exactly 10 pentacle coins; PAGE OF PENTACLES: curious black kitten studies a single pentacle coin in meadow; KNIGHT OF PENTACLES: armored black cat on still black horse holding pentacle overlooking fields; QUEEN OF PENTACLES: nurturing white cat on floral throne cradling pentacle with rabbit below; KING OF PENTACLES: prosperous black cat on vine-covered throne holding pentacle and sceptre, luxurious violet robes."
+    ]
+  ]
+}
