@@ -428,7 +428,7 @@ def build_set2_embed(has_attached_gif: bool = False) -> discord.Embed:
         title="ดูดวงกับพ่อหมอป๊อก 🔮",
         description=(
             "```text\n"
-            "สถานะ   : กำลังเปิดให้ดูดวงฟรี ไม่มีค่าใช้จ่าย\n"
+            "Status   : กำลังเปิดให้ดูดวงฟรี ไม่มีค่าใช้จ่าย\n"
             "```"
         ),
         color=PURPLE,
@@ -438,6 +438,14 @@ def build_set2_embed(has_attached_gif: bool = False) -> discord.Embed:
     else:
         # Fallback when GIPHY is unreachable from the VPS.
         embed.set_image(url=SET2_GIF_URL)
+
+    embed.add_field(
+        name="\u200b",
+        value=(
+            "**แม่นไม่แม่น อยู่ที่ตัวท่านเอง**\n"
+        ),
+        inline=False,
+    )
     embed.set_footer(text=FOOTER_TEXT)
     return embed
 
