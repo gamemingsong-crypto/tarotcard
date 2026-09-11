@@ -23,6 +23,8 @@ load_dotenv(BASE_DIR / ".env")
 TOKEN = os.getenv("DISCORD_TOKEN", "").strip()
 GUILD_ID = os.getenv("GUILD_ID", "").strip()
 STATUS_TEXT = "ดูดวงกับพ่อหมอป๊อก | /ดูดวง"
+ONLINE_STATUS_TEXT = "พร้อมดูดวง"
+OFFLINE_STATUS_TEXT = "ไม่มีอารมณ์ดูดวง"
 FOOTER_TEXT = "ความเชื่อส่วนบุคคล โปรดใช้วิจารณญาณในการอ่าน"
 CACHE_PATH = BASE_DIR / "data" / "daily_cache.json"
 ART_DIR = BASE_DIR / "assets" / "cat_tarot"
@@ -424,25 +426,30 @@ async def ensure_set2_gif() -> discord.File | None:
 
 
 def build_set2_embed(has_attached_gif: bool = False) -> discord.Embed:
+    bot_status = (
+        "พร้อมดูดวง"
+        if "bot" in globals() and bot.is_ready()
+        else "ไม่มีอารมณ์ดูดวง"
+    )
+
     embed = discord.Embed(
         title="ดูดวงกับพ่อหมอป๊อก 🔮",
         description=(
             "```text\n"
-            "Status   : กำลังเปิดให้ดูดวงฟรี ไม่มีค่าใช้จ่าย\n"
+            f"สถานะ   : {bot_status}\n"
             "```"
         ),
         color=PURPLE,
     )
+
     if has_attached_gif:
         embed.set_image(url="attachment://set2-menu.gif")
     else:
-        # Fallback when GIPHY is unreachable from the VPS.
         embed.set_image(url=SET2_GIF_URL)
 
     embed.add_field(
         name="\u200b",
         value=(
-            "**แม่นไม่แม่น อยู่ที่ตัวท่านเอง**\n"
             "🧡 ดูดวง `= ดูรายวัน/รายเดือน และ หมวดหมู่`\n"
             "❤️ เปิดไพ่ `= เลือกจำนวนไพ่ 1, 3, 5, หรือ 10 ใบ พร้อมคำทำนาย`\n"
         ),
@@ -695,9 +702,36 @@ bot = TarotBot(
 )
 
 
+async def update_presence():
+    """อัปเดตข้อความสถานะตามสถานะการเชื่อมต่อของบอท."""
+    await bot.change_presence(
+        status=discord.Status.online,
+        activity=discord.CustomActivity(name=ONLINE_STATUS_TEXT),
+    )
+
+
 @bot.event
 async def on_ready():
-    logger.info("Logged in as %s — พร้อมดูดวงแล้ว!", bot.user)
+    await update_presence()
+    logger.info("Logged in as %s — %s", bot.user, ONLINE_STATUS_TEXT)
+
+
+@bot.event
+async def on_disconnect():
+    logger.warning("Discord disconnected — %s", OFFLINE_STATUS_TEXT)
+    try:
+        await bot.change_presence(
+            status=discord.Status.idle,
+            activity=discord.CustomActivity(name=OFFLINE_STATUS_TEXT),
+        )
+    except Exception:
+        logger.exception("Unable to update offline presence")
+
+
+@bot.event
+async def on_resumed():
+    await update_presence()
+    logger.info("Discord connection resumed — %s", ONLINE_STATUS_TEXT)
 
 
 @bot.command(name="set2")
