@@ -366,8 +366,265 @@ async def send_reading(interaction, embeds, drawn):
         await interaction.followup.send(embed=page, ephemeral=True)
 
 
+SET2_DONATE_CHANNEL_ID = 1511062155640963072
+SET2_GIF_URL = (
+    "https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExbXhld3R3dnZoc294"
+    "YnJubW55N2wwYWh0ZG5ic2x6eDIxNGRkaWtqbCZlcD12MV9pbnRlcm5hbF9naWZf"
+    "YnlfaWQmY3Q9Zw/EdZ3R2o7WBuoQuB27z/giphy.gif"
+)
+
+
+def build_set2_embed() -> discord.Embed:
+    """Embed เมนูหลักตามภาพตัวอย่าง."""
+    embed = discord.Embed(
+        title="ดูดวงกับพ่อหมอป๊อก 🔮",
+        description=(
+            "**หมวดหมู่**     : ภาพรวม · การเงิน · การงาน · ความรัก · สุขภาพ\n"
+            "**สถานะ**       : กำลังเปิดให้ดูดวงฟรี ไม่มีค่าใช้จ่าย"
+        ),
+        color=PURPLE,
+    )
+    embed.set_image(url=SET2_GIF_URL)
+    embed.add_field(
+        name="\u200b",
+        value=(
+            "**สนับสนุน Server ง่ายๆ**\n"
+            "ได้ที่ห้อง <#1511062155640963072> ข้างล่างเลย"
+        ),
+        inline=False,
+    )
+    embed.set_footer(text=FOOTER_TEXT)
+    return embed
+
+
+def build_help_embed() -> discord.Embed:
+    embed = discord.Embed(title="🔮 ดูดวงกับพ่อหมอป๊อก", color=PURPLE)
+    embed.add_field(
+        name="/ดูดวง [ช่วงเวลา] [หมวดหมู่]",
+        value=(
+            "เลือก **รายวัน / รายเดือน** และเลือก 5 หมวดหมู่: "
+            "**ภาพรวม, การเงิน, การงาน, ความรัก, สุขภาพ**\n"
+            "เห็นผลเฉพาะคุณ พร้อมรูป ชื่อไทย–อังกฤษ ความหมาย คำทำนาย และคำแนะนำ"
+        ),
+        inline=False,
+    )
+    embed.add_field(
+        name="/เปิดไพ่ [จำนวน] [คำถาม]",
+        value=(
+            "เลือก **1 / 3 / 5 / 10 ใบ** พร้อมคำทำนายตามตำแหน่งและทิศทางไพ่ "
+            "ข้อความยาวจะแบ่งหน้า"
+        ),
+        inline=False,
+    )
+    embed.add_field(
+        name="/วิธีใช้",
+        value=(
+            "คำทำนายตีความจากข้อความที่เตรียมไว้ตามไพ่และตำแหน่ง "
+            "ไม่ได้ใช้ AI วิเคราะห์คำถามอิสระ และไม่ยืนยันเหตุการณ์ในอนาคต"
+        ),
+        inline=False,
+    )
+    embed.set_footer(text=FOOTER_TEXT)
+    return embed
+
+
+async def send_duang_result(interaction: discord.Interaction, period: str, category: str):
+    await interaction.response.defer(thinking=True, ephemeral=True)
+    card, orientation, _cached_advice = get_or_draw_card(
+        interaction.user.id, period, category
+    )
+    outlook, advice = prediction(
+        card, orientation, category=category, period=period
+    )
+    emoji = tarot.CATEGORY_INFO.get(category, {}).get("emoji", "🔮")
+    embed = discord.Embed(
+        title=f"{emoji} ดวง{period} — {category}",
+        description=(
+            f"{card['emoji']} **{card_names(card)} "
+            f"({tarot.orientation_label(orientation)})**"
+        ),
+        color=PURPLE if orientation == "upright" else REVERSED_COLOR,
+    )
+    embed.add_field(
+        name="📖 ความหมายไพ่",
+        value=text_box(card_meaning(card, orientation)),
+        inline=False,
+    )
+    embed.add_field(
+        name="🔮 คำทำนาย",
+        value=text_box(outlook),
+        inline=False,
+    )
+    embed.add_field(
+        name="💡 คำแนะนำ",
+        value=text_box(advice),
+        inline=False,
+    )
+    embed.set_footer(text=FOOTER_TEXT)
+    await send_reading(interaction, embed, [(card, orientation)])
+
+
+async def send_open_cards_result(
+    interaction: discord.Interaction,
+    count: int,
+    question: str | None = None,
+):
+    await interaction.response.defer(thinking=True, ephemeral=True)
+    drawn = tarot.draw_cards(count)
+    desc = "🐈‍⬛ สับไพ่… ให้ไพ่แมวนำทางไปกับพ่อหมอป๊อก"
+    if question:
+        desc += f"\n\n**คำถาม:** {discord.utils.escape_markdown(question)}"
+    embed = discord.Embed(
+        title=f"🔮 เปิดไพ่ทาโร่ {count} ใบ",
+        description=desc,
+        color=PURPLE,
+    )
+    embed.set_footer(text=FOOTER_TEXT)
+    pages = [embed]
+    for index, (position, (card, orientation)) in enumerate(
+        zip(tarot.SPREAD_POSITIONS[count], drawn), 1
+    ):
+        outlook, advice = prediction(card, orientation, position=position)
+        add_reading_fields(
+            pages,
+            name=(
+                f"{index}. {position} — {card_names(card)} "
+                f"({tarot.orientation_label(orientation)})"
+            ),
+            value=(
+                f"📖 **ความหมายไพ่**\n{text_box(card_meaning(card, orientation))}\n"
+                f"🔮 **คำทำนาย**\n{text_box(outlook)}\n"
+                f"💡 **คำแนะนำ**\n{text_box(advice)}"
+            ),
+        )
+    await send_reading(interaction, pages, drawn)
+
+
+class DuangPickerView(discord.ui.View):
+    def __init__(self):
+        super().__init__(timeout=120)
+
+    @discord.ui.select(
+        placeholder="เลือกช่วงเวลา",
+        options=[
+            discord.SelectOption(label="รายวัน", value="รายวัน", emoji="📅"),
+            discord.SelectOption(label="รายเดือน", value="รายเดือน", emoji="🗓️"),
+        ],
+        min_values=1,
+        max_values=1,
+    )
+    async def period_select(self, interaction: discord.Interaction, select: discord.ui.Select):
+        period = select.values[0]
+        await interaction.response.edit_message(
+            content=f"🔮 ช่วงเวลา: **{period}**\nเลือกหมวดหมู่ที่ต้องการดูได้เลย",
+            view=CategoryPickerView(period),
+        )
+
+
+class CategoryPickerView(discord.ui.View):
+    def __init__(self, period: str):
+        super().__init__(timeout=120)
+        self.period = period
+
+    @discord.ui.select(
+        placeholder="เลือกหมวดหมู่",
+        options=[
+            discord.SelectOption(label="ภาพรวม", value="ภาพรวม", emoji="🔮"),
+            discord.SelectOption(label="การเงิน", value="การเงิน", emoji="💰"),
+            discord.SelectOption(label="การงาน", value="การงาน", emoji="💼"),
+            discord.SelectOption(label="ความรัก", value="ความรัก", emoji="❤️"),
+            discord.SelectOption(label="สุขภาพ", value="สุขภาพ", emoji="🌿"),
+        ],
+        min_values=1,
+        max_values=1,
+    )
+    async def category_select(self, interaction: discord.Interaction, select: discord.ui.Select):
+        await send_duang_result(interaction, self.period, select.values[0])
+
+
+class OpenCardsPickerView(discord.ui.View):
+    def __init__(self):
+        super().__init__(timeout=120)
+
+    @discord.ui.select(
+        placeholder="เลือกจำนวนไพ่",
+        options=[
+            discord.SelectOption(label="1 ใบ", value="1", description="คำตอบตรงๆ", emoji="🃏"),
+            discord.SelectOption(label="3 ใบ", value="3", description="อดีต / ปัจจุบัน / อนาคต", emoji="🔮"),
+            discord.SelectOption(label="5 ใบ", value="5", description="ภาพรวมสถานการณ์", emoji="🖐️"),
+            discord.SelectOption(label="10 ใบ", value="10", description="Celtic Cross", emoji="✨"),
+        ],
+        min_values=1,
+        max_values=1,
+    )
+    async def count_select(self, interaction: discord.Interaction, select: discord.ui.Select):
+        await send_open_cards_result(interaction, int(select.values[0]))
+
+
+class Set2View(discord.ui.View):
+    """Persistent menu for !set2."""
+
+    def __init__(self, donate_url: str | None = None):
+        super().__init__(timeout=None)
+        if donate_url:
+            for child in self.children:
+                if isinstance(child, discord.ui.Button) and child.style == discord.ButtonStyle.link:
+                    child.url = donate_url
+
+    @discord.ui.button(
+        label="/ดูดวง",
+        emoji="✅",
+        style=discord.ButtonStyle.success,
+        custom_id="set2:duang",
+    )
+    async def duang_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.send_message(
+            "🔮 เลือกช่วงเวลาที่ต้องการดูดวง",
+            view=DuangPickerView(),
+            ephemeral=True,
+        )
+
+    @discord.ui.button(
+        label="เปิดไพ่",
+        emoji="🔮",
+        style=discord.ButtonStyle.danger,
+        custom_id="set2:open_cards",
+    )
+    async def open_cards_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.send_message(
+            "🃏 เลือกจำนวนไพ่ที่ต้องการเปิด",
+            view=OpenCardsPickerView(),
+            ephemeral=True,
+        )
+
+    @discord.ui.button(
+        label="วิธีใช้งาน",
+        emoji="📖",
+        style=discord.ButtonStyle.secondary,
+        custom_id="set2:help",
+    )
+    async def help_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.send_message(
+            embed=build_help_embed(),
+            ephemeral=True,
+        )
+
+    @discord.ui.button(
+        label="Donate ↗",
+        emoji="🎁",
+        style=discord.ButtonStyle.link,
+        url="https://discord.com/channels/@me",
+    )
+    async def donate_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+        # Link button ไม่เรียก callback
+        pass
+
+
 class TarotBot(commands.Bot):
     async def setup_hook(self):
+        # Register the persistent !set2 buttons before syncing.
+        self.add_view(Set2View())
+
         # Sync once at startup, not on every reconnect.
         if GUILD_ID:
             guild = discord.Object(id=int(GUILD_ID))
@@ -378,9 +635,12 @@ class TarotBot(commands.Bot):
         logger.info("Synced %s slash commands", len(synced))
 
 
+intents = discord.Intents.default()
+intents.message_content = True
+
 bot = TarotBot(
     command_prefix="!",
-    intents=discord.Intents.default(),
+    intents=intents,
     status=discord.Status.online,
     activity=discord.CustomActivity(name=STATUS_TEXT),
     allowed_mentions=discord.AllowedMentions.none(),
@@ -390,6 +650,32 @@ bot = TarotBot(
 @bot.event
 async def on_ready():
     logger.info("Logged in as %s — พร้อมดูดวงแล้ว!", bot.user)
+
+
+@bot.command(name="set2")
+@commands.guild_only()
+@commands.has_guild_permissions(manage_guild=True)
+async def set2(ctx: commands.Context):
+    embed = build_set2_embed()
+    donate_url = f"https://discord.com/channels/{ctx.guild.id}/{SET2_DONATE_CHANNEL_ID}"
+    await ctx.send(embed=embed, view=Set2View(donate_url=donate_url))
+
+
+@set2.error
+async def set2_error(ctx: commands.Context, error: Exception):
+    if isinstance(error, commands.MissingPermissions):
+        await ctx.reply(
+            "คำสั่งนี้ต้องมีสิทธิ์ **Manage Server** ก่อนครับ",
+            mention_author=False,
+        )
+    elif isinstance(error, commands.NoPrivateMessage):
+        await ctx.reply(
+            "ใช้คำสั่งนี้ภายในเซิร์ฟเวอร์เท่านั้นครับ",
+            mention_author=False,
+        )
+    else:
+        logger.exception("!set2 failed", exc_info=error)
+        await ctx.reply("เกิดข้อผิดพลาดในการส่ง Embed ครับ", mention_author=False)
 
 
 @bot.tree.command(name="ดูดวง", description="ดูดวงรายวันหรือรายเดือนกับพ่อหมอป๊อก")
@@ -402,22 +688,7 @@ async def on_ready():
 async def duang(interaction: discord.Interaction,
                 ช่วงเวลา: app_commands.Choice[str],
                 หมวดหมู่: app_commands.Choice[str]):
-    await interaction.response.defer(thinking=True, ephemeral=True)
-    period, category = ช่วงเวลา.value, หมวดหมู่.value
-    card, orientation, _cached_advice = get_or_draw_card(interaction.user.id, period, category)
-    outlook, advice = prediction(card, orientation, category=category, period=period)
-    emoji = tarot.CATEGORY_INFO.get(category, {}).get("emoji", "🔮")
-    embed = discord.Embed(
-        title=f"{emoji} ดวง{period} — {category}",
-        description=(f"{card['emoji']} **{card_names(card)} "
-                     f"({tarot.orientation_label(orientation)})**"),
-        color=PURPLE if orientation == "upright" else REVERSED_COLOR,
-    )
-    embed.add_field(name="📖 ความหมายไพ่", value=text_box(card_meaning(card, orientation)), inline=False)
-    embed.add_field(name="🔮 คำทำนาย", value=text_box(outlook), inline=False)
-    embed.add_field(name="💡 คำแนะนำ", value=text_box(advice), inline=False)
-    embed.set_footer(text=FOOTER_TEXT)
-    await send_reading(interaction, embed, [(card, orientation)])
+    await send_duang_result(interaction, ช่วงเวลา.value, หมวดหมู่.value)
 
 
 @bot.tree.command(name="เปิดไพ่", description="เปิดไพ่แมว 1, 3, 5 หรือ 10 ใบ")
@@ -431,43 +702,15 @@ async def duang(interaction: discord.Interaction,
 async def open_cards(interaction: discord.Interaction,
                      จำนวน: app_commands.Choice[int],
                      คำถาม: app_commands.Range[str, 1, 1000] = None):
-    await interaction.response.defer(thinking=True, ephemeral=True)
-    count = จำนวน.value
-    drawn = tarot.draw_cards(count)
-    desc = "🐈‍⬛ สับไพ่… ให้ไพ่แมวนำทางไปกับพ่อหมอป๊อก"
-    if คำถาม:
-        desc += f"\n\n**คำถาม:** {discord.utils.escape_markdown(คำถาม)}"
-    embed = discord.Embed(title=f"🔮 เปิดไพ่ทาโร่ {count} ใบ", description=desc, color=PURPLE)
-    embed.set_footer(text=FOOTER_TEXT)
-    pages = [embed]
-    for index, (position, (card, orientation)) in enumerate(
-            zip(tarot.SPREAD_POSITIONS[count], drawn), 1):
-        outlook, advice = prediction(card, orientation, position=position)
-        add_reading_fields(
-            pages,
-            name=(f"{index}. {position} — {card_names(card)} "
-                  f"({tarot.orientation_label(orientation)})"),
-            value=(f"📖 **ความหมายไพ่**\n{text_box(card_meaning(card, orientation))}\n"
-                   f"🔮 **คำทำนาย**\n{text_box(outlook)}\n"
-                   f"💡 **คำแนะนำ**\n{text_box(advice)}"),
-        )
-    await send_reading(interaction, pages, drawn)
+    await send_open_cards_result(interaction, จำนวน.value, คำถาม)
 
 
 @bot.tree.command(name="วิธีใช้", description="วิธีดูดวงกับพ่อหมอป๊อก")
 async def help_command(interaction: discord.Interaction):
-    embed = discord.Embed(title="🔮 ดูดวงกับพ่อหมอป๊อก", color=PURPLE)
-    embed.add_field(name="/ดูดวง [ช่วงเวลา] [หมวดหมู่]",
-                    value="เห็นผลเฉพาะคุณ พร้อมรูป ชื่อไทย–อังกฤษ ความหมาย คำทำนาย และคำแนะนำ ไพ่เดิมในรอบเวลาเดียวกัน",
-                    inline=False)
-    embed.add_field(name="/เปิดไพ่ [จำนวน] [คำถาม]",
-                    value="เห็นผลเฉพาะคุณ สุ่ม 1, 3, 5 หรือ 10 ใบ พร้อมคำทำนายตามตำแหน่งและทิศทางไพ่ ข้อความยาวจะแบ่งหน้า",
-                    inline=False)
-    embed.add_field(name="เกี่ยวกับคำทำนาย",
-                    value="ตีความจากข้อความที่เตรียมไว้ตามไพ่และตำแหน่ง ไม่ได้ใช้ AI วิเคราะห์คำถามอิสระ และไม่ยืนยันเหตุการณ์ในอนาคต",
-                    inline=False)
-    embed.set_footer(text=FOOTER_TEXT)
-    await interaction.response.send_message(embed=embed, ephemeral=True)
+    await interaction.response.send_message(
+        embed=build_help_embed(),
+        ephemeral=True,
+    )
 
 
 @bot.tree.error
