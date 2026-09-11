@@ -450,7 +450,7 @@ def build_set2_embed(has_attached_gif: bool = False, guild: discord.Guild | None
         title="ดูดวงกับพ่อหมอป๊อก 🔮",
         description=(
             "```text\n"
-            f"สถานะ   : {bot_status}\n"
+            f"สถานะ : {bot_status}\n"
             "```"
         ),
         color=PURPLE,
