@@ -566,10 +566,21 @@ class Set2View(discord.ui.View):
 
     def __init__(self, donate_url: str | None = None):
         super().__init__(timeout=None)
-        if donate_url:
-            for child in self.children:
-                if isinstance(child, discord.ui.Button) and child.style == discord.ButtonStyle.link:
-                    child.url = donate_url
+        # Link buttons cannot be created with @discord.ui.button(url=...).
+        # They must be added as a Button object with style=link and url=.
+        if donate_url is None:
+            if GUILD_ID and GUILD_ID.isdigit():
+                donate_url = f"https://discord.com/channels/{GUILD_ID}/{SET2_DONATE_CHANNEL_ID}"
+            else:
+                donate_url = "https://discord.com/channels/@me"
+        self.add_item(
+            discord.ui.Button(
+                label="Donate ↗",
+                emoji="🎁",
+                style=discord.ButtonStyle.link,
+                url=donate_url,
+            )
+        )
 
     @discord.ui.button(
         label="/ดูดวง",
@@ -608,17 +619,6 @@ class Set2View(discord.ui.View):
             embed=build_help_embed(),
             ephemeral=True,
         )
-
-    @discord.ui.button(
-        label="Donate ↗",
-        emoji="🎁",
-        style=discord.ButtonStyle.link,
-        url="https://discord.com/channels/@me",
-    )
-    async def donate_button(self, interaction: discord.Interaction, button: discord.ui.Button):
-        # Link button ไม่เรียก callback
-        pass
-
 
 class TarotBot(commands.Bot):
     async def setup_hook(self):
