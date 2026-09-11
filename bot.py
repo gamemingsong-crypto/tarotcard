@@ -443,8 +443,8 @@ def build_set2_embed(has_attached_gif: bool = False) -> discord.Embed:
         name="\u200b",
         value=(
             "**แม่นไม่แม่น อยู่ที่ตัวท่านเอง**\n"
-            ":LightOrangeSpinningPixelHeart: ดูดวง `= เลือกช่วงเวลา: รายวัน/รายเดือน และ หมวดหมู่`\n"
-            ":RedSpinningPixelHeart: เปิดไพ่ `= เลือกจำนวนไพ่ 1, 3, 5, หรือ 10 ใบ พร้อมคำทำนาย`\n"
+            "🧡 ดูดวง `= ดูรายวัน/รายเดือน และ หมวดหมู่`\n"
+            "❤️ เปิดไพ่ `= เลือกจำนวนไพ่ 1, 3, 5, หรือ 10 ใบ พร้อมคำทำนาย`\n"
         ),
         inline=False,
     )
