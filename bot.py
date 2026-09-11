@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """พ่อหมอป๊อก — Discord tarot bot with the purple cat deck."""
 import asyncio
+import aiohttp
 import io
 import json
 import logging
@@ -368,26 +369,83 @@ async def send_reading(interaction, embeds, drawn):
 
 
 SET2_DONATE_CHANNEL_ID = 1511062155640963072
+
+# Keep the user's original GIPHY URL as the source, but upload the GIF to Discord
+# as an attachment when !set2 is used. This avoids Discord/GIPHY proxying it as a
+# still frame.
 SET2_GIF_URL = (
     "https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExbXhld3R3dnZoc294"
     "YnJubW55N2wwYWh0ZG5ic2x6eDIxNGRkaWtqbCZlcD12MV9pbnRlcm5hbF9naWZf"
     "YnlfaWQmY3Q9Zw/EdZ3R2o7WBuoQuB27z/giphy.gif"
 )
+SET2_GIF_CACHE = BASE_DIR / "data" / "set2_menu.gif"
+
+CUSTOM_EMOJI_FALLBACKS = {
+    "LightOrangeSpinningPixelHeart": "🧡",
+    "RedSpinningPixelHeart": "❤️",
+    "CatToken": "🐈",
+}
+CUSTOM_EMOJI_NAMES = {
+    "duang": "LightOrangeSpinningPixelHeart",
+    "open_cards": "RedSpinningPixelHeart",
+    "donate": "CatToken",
+}
 
 
-def build_set2_embed() -> discord.Embed:
+def _guild_emoji(guild: discord.Guild | None, name: str, fallback: str):
+    """Return the server custom emoji by exact name, with a Unicode fallback."""
+    if guild is None:
+        return fallback
+    emoji = discord.utils.get(guild.emojis, name=name)
+    return emoji if emoji is not None else fallback
+
+
+async def ensure_set2_gif() -> discord.File | None:
+    """Download the GIPHY GIF once and return it as a Discord attachment."""
+    SET2_GIF_CACHE.parent.mkdir(parents=True, exist_ok=True)
+    if not SET2_GIF_CACHE.is_file():
+        try:
+            timeout = aiohttp.ClientTimeout(total=20)
+            async with aiohttp.ClientSession(timeout=timeout) as session:
+                async with session.get(
+                    SET2_GIF_URL,
+                    headers={"User-Agent": "Mozilla/5.0"},
+                    allow_redirects=True,
+                ) as response:
+                    response.raise_for_status()
+                    data = await response.read()
+            if data[:6] not in (b"GIF87a", b"GIF89a"):
+                raise ValueError("ดาวน์โหลดมาไม่ใช่ไฟล์ GIF")
+            SET2_GIF_CACHE.write_bytes(data)
+        except Exception:
+            logger.exception("Unable to cache Set2 GIF from GIPHY")
+            return None
+    return discord.File(SET2_GIF_CACHE, filename="set2-menu.gif")
+
+
+def build_set2_embed(has_attached_gif: bool = False) -> discord.Embed:
     embed = discord.Embed(
         title="ดูดวงกับพ่อหมอป๊อก 🔮",
         description=(
-            "**หมวดหมู่**     : ภาพรวม · การเงิน · การงาน · ความรัก · สุขภาพ\n"
-            "**สถานะ**       : กำลังเปิดให้ดูดวงฟรี ไม่มีค่าใช้จ่าย"
+            "```text\n"
+            "หมวดหมู่ : ภาพรวม · การเงิน · การงาน · ความรัก · สุขภาพ\n"
+            "สถานะ   : กำลังเปิดให้ดูดวงฟรี ไม่มีค่าใช้จ่าย\n"
+            "```"
         ),
         color=PURPLE,
     )
-    embed.set_image(url=SET2_GIF_URL)
+    if has_attached_gif:
+        embed.set_image(url="attachment://set2-menu.gif")
+    else:
+        # Fallback when GIPHY is unreachable from the VPS.
+        embed.set_image(url=SET2_GIF_URL)
+
     embed.add_field(
         name="\u200b",
-        value=f"**สนับสนุน Server ง่ายๆ**\nได้ที่ห้อง <#{SET2_DONATE_CHANNEL_ID}> ข้างล่างเลย",
+        value=(
+            "**สนับสนุน Server ง่ายๆ**\n"
+            f"ได้ที่ห้อง <#{SET2_DONATE_CHANNEL_ID}> ข้างล่างเลย"
+        ),
         inline=False,
     )
     embed.set_footer(text=FOOTER_TEXT)
@@ -523,18 +581,38 @@ class OpenCardsPickerView(discord.ui.View):
 
 
 class Set2View(discord.ui.View):
-    """Persistent interactive buttons only."""
+    """Interactive buttons for the !set2 menu."""
 
-    def __init__(self):
+    def __init__(self, guild: discord.Guild | None = None):
         super().__init__(timeout=None)
+        # Decorator-created button objects are now available as children.
+        for child in self.children:
+            if not isinstance(child, discord.ui.Button):
+                continue
+            if child.custom_id == "set2:duang":
+                child.emoji = _guild_emoji(
+                    guild,
+                    CUSTOM_EMOJI_NAMES["duang"],
+                    CUSTOM_EMOJI_FALLBACKS["LightOrangeSpinningPixelHeart"],
+                )
+            elif child.custom_id == "set2:open_cards":
+                child.emoji = _guild_emoji(
+                    guild,
+                    CUSTOM_EMOJI_NAMES["open_cards"],
+                    CUSTOM_EMOJI_FALLBACKS["RedSpinningPixelHeart"],
+                )
+            elif child.custom_id == "set2:help":
+                child.emoji = "📖"
 
     @discord.ui.button(
-        label="/ดูดวง",
-        emoji="✅",
+        label="ดูดวง",
+        emoji="🧡",
         style=discord.ButtonStyle.success,
         custom_id="set2:duang",
     )
-    async def duang_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def duang_button(
+        self, interaction: discord.Interaction, button: discord.ui.Button
+    ):
         await interaction.response.send_message(
             "🔮 เลือกช่วงเวลาที่ต้องการดูดวง",
             view=DuangPickerView(),
@@ -543,11 +621,13 @@ class Set2View(discord.ui.View):
 
     @discord.ui.button(
         label="เปิดไพ่",
-        emoji="🔮",
+        emoji="❤️",
         style=discord.ButtonStyle.danger,
         custom_id="set2:open_cards",
     )
-    async def open_cards_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def open_cards_button(
+        self, interaction: discord.Interaction, button: discord.ui.Button
+    ):
         await interaction.response.send_message(
             "🃏 เลือกจำนวนไพ่ที่ต้องการเปิด",
             view=OpenCardsPickerView(),
@@ -560,7 +640,9 @@ class Set2View(discord.ui.View):
         style=discord.ButtonStyle.secondary,
         custom_id="set2:help",
     )
-    async def help_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def help_button(
+        self, interaction: discord.Interaction, button: discord.ui.Button
+    ):
         await interaction.response.send_message(
             embed=build_help_embed(),
             ephemeral=True,
@@ -568,14 +650,18 @@ class Set2View(discord.ui.View):
 
 
 class Set2MessageView(Set2View):
-    """The posted message gets an extra Donate link button."""
+    """Message view with a real Donate link button."""
 
-    def __init__(self, donate_url: str):
-        super().__init__()
+    def __init__(self, guild: discord.Guild, donate_url: str):
+        super().__init__(guild=guild)
         self.add_item(
             discord.ui.Button(
-                label="Donate ↗",
-                emoji="🎁",
+                label="Donate",
+                emoji=_guild_emoji(
+                    guild,
+                    CUSTOM_EMOJI_NAMES["donate"],
+                    CUSTOM_EMOJI_FALLBACKS["CatToken"],
+                ),
                 style=discord.ButtonStyle.link,
                 url=donate_url,
             )
@@ -584,7 +670,8 @@ class Set2MessageView(Set2View):
 
 class TarotBot(commands.Bot):
     async def setup_hook(self):
-        # Persistent view contains only buttons with custom_id.
+        # Register persistent handlers. Emoji decoration is cosmetic; interactions
+        # are matched by custom_id.
         self.add_view(Set2View())
 
         if GUILD_ID:
@@ -618,10 +705,20 @@ async def on_ready():
 @commands.has_guild_permissions(manage_guild=True)
 async def set2(ctx: commands.Context):
     donate_url = f"https://discord.com/channels/{ctx.guild.id}/{SET2_DONATE_CHANNEL_ID}"
-    await ctx.send(
-        embed=build_set2_embed(),
-        view=Set2MessageView(donate_url),
-    )
+    gif_file = await ensure_set2_gif()
+    embed = build_set2_embed(has_attached_gif=gif_file is not None)
+
+    if gif_file is not None:
+        await ctx.send(
+            embed=embed,
+            view=Set2MessageView(ctx.guild, donate_url),
+            file=gif_file,
+        )
+    else:
+        await ctx.send(
+            embed=embed,
+            view=Set2MessageView(ctx.guild, donate_url),
+        )
 
 
 @set2.error
