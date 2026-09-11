@@ -425,7 +425,21 @@ async def ensure_set2_gif() -> discord.File | None:
     return discord.File(SET2_GIF_CACHE, filename="set2-menu.gif")
 
 
-def build_set2_embed(has_attached_gif: bool = False) -> discord.Embed:
+
+def _guild_emoji_markup(
+    guild: discord.Guild | None,
+    name: str,
+    fallback: str,
+) -> str:
+    """คืน custom emoji markup จากชื่อ emoji ในเซิร์ฟเวอร์."""
+    if guild is not None:
+        emoji = discord.utils.get(guild.emojis, name=name)
+        if emoji is not None:
+            return str(emoji)
+    return fallback
+
+
+def build_set2_embed(has_attached_gif: bool = False, guild: discord.Guild | None = None) -> discord.Embed:
     bot_status = (
         "พร้อมดูดวง"
         if "bot" in globals() and bot.is_ready()
@@ -447,11 +461,22 @@ def build_set2_embed(has_attached_gif: bool = False) -> discord.Embed:
     else:
         embed.set_image(url=SET2_GIF_URL)
 
+    duang_emoji = _guild_emoji_markup(
+        guild,
+        "LightOrangeSpinningPixelHeart",
+        "🧡",
+    )
+    open_cards_emoji = _guild_emoji_markup(
+        guild,
+        "RedSpinningPixelHeart",
+        "❤️",
+    )
+
     embed.add_field(
         name="\u200b",
         value=(
-            "🧡 ดูดวง `= ดูรายวัน/รายเดือน และ หมวดหมู่`\n"
-            "❤️ เปิดไพ่ `= เลือกจำนวนไพ่ 1, 3, 5, หรือ 10 ใบ พร้อมคำทำนาย`\n"
+            f"{duang_emoji} **ดูดวง** `= ดูรายวัน/รายเดือน และ หมวดหมู่`\n"
+            f"{open_cards_emoji} **เปิดไพ่** `= เลือกจำนวนไพ่ 1, 3, 5, หรือ 10 ใบ พร้อมคำทำนาย`\n"
         ),
         inline=False,
     )
@@ -740,7 +765,7 @@ async def on_resumed():
 async def set2(ctx: commands.Context):
     donate_url = f"https://discord.com/channels/{ctx.guild.id}/{SET2_DONATE_CHANNEL_ID}"
     gif_file = await ensure_set2_gif()
-    embed = build_set2_embed(has_attached_gif=gif_file is not None)
+    embed = build_set2_embed(has_attached_gif=gif_file is not None, guild=ctx.guild)
 
     if gif_file is not None:
         await ctx.send(
