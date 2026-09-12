@@ -381,6 +381,30 @@ SET2_GIF_URL = (
     "YnlfaWQmY3Q9Zw/EdZ3R2o7WBuoQuB27z/giphy.gif"
 )
 SET2_GIF_CACHE = BASE_DIR / "data" / "set2_menu.gif"
+SET2_MESSAGES_PATH = BASE_DIR / "data" / "set2_messages.json"
+
+
+def load_set2_messages() -> dict:
+    """channel_id (str) -> message_id (int) for every !set2 embed ever sent."""
+    try:
+        result = json.loads(SET2_MESSAGES_PATH.read_text(encoding="utf-8"))
+        return result if isinstance(result, dict) else {}
+    except (OSError, ValueError):
+        return {}
+
+
+def save_set2_messages(data: dict) -> None:
+    SET2_MESSAGES_PATH.parent.mkdir(parents=True, exist_ok=True)
+    temporary = SET2_MESSAGES_PATH.with_suffix(".tmp")
+    temporary.write_text(json.dumps(data, ensure_ascii=False, indent=2),
+                          encoding="utf-8")
+    temporary.replace(SET2_MESSAGES_PATH)
+
+
+def remember_set2_message(channel_id: int, message_id: int) -> None:
+    data = load_set2_messages()
+    data[str(channel_id)] = message_id
+    save_set2_messages(data)
 
 CUSTOM_EMOJI_FALLBACKS = {
     "LightOrangeSpinningPixelHeart": "🧡",
@@ -731,9 +755,58 @@ async def update_presence():
     )
 
 
+async def refresh_set2_messages() -> None:
+    """Re-edit every !set2 embed sent previously so it reflects the latest
+    content/status text, without needing an admin to re-run !set2 by hand."""
+    data = load_set2_messages()
+    if not data:
+        return
+
+    changed = False
+    for channel_id_str, message_id in list(data.items()):
+        channel_id = int(channel_id_str)
+        channel = bot.get_channel(channel_id)
+        if channel is None:
+            try:
+                channel = await bot.fetch_channel(channel_id)
+            except discord.HTTPException:
+                logger.warning("set2: channel %s unavailable, dropping it", channel_id)
+                data.pop(channel_id_str, None)
+                changed = True
+                continue
+
+        try:
+            message = await channel.fetch_message(message_id)
+        except discord.HTTPException:
+            logger.warning("set2: message %s in channel %s missing, dropping it",
+                            message_id, channel_id)
+            data.pop(channel_id_str, None)
+            changed = True
+            continue
+
+        guild = getattr(channel, "guild", None)
+        embed = build_set2_embed(has_attached_gif=bool(message.attachments), guild=guild)
+        if guild is not None:
+            donate_url = f"https://discord.com/channels/{guild.id}/{SET2_DONATE_CHANNEL_ID}"
+            view = Set2MessageView(guild, donate_url)
+        else:
+            view = Set2View(guild)
+
+        try:
+            await message.edit(embed=embed, view=view)
+            logger.info("set2: refreshed message %s in channel %s", message_id, channel_id)
+        except discord.HTTPException:
+            logger.exception("set2: failed to refresh message %s in channel %s",
+                              message_id, channel_id)
+
+    if changed:
+        save_set2_messages(data)
+
+
 @bot.event
 async def on_ready():
     await update_presence()
+    await refresh_set2_messages()
     logger.info("Logged in as %s — %s", bot.user, ONLINE_STATUS_TEXT)
 
 
@@ -764,16 +837,18 @@ async def set2(ctx: commands.Context):
     embed = build_set2_embed(has_attached_gif=gif_file is not None, guild=ctx.guild)
 
     if gif_file is not None:
-        await ctx.send(
+        sent = await ctx.send(
             embed=embed,
             view=Set2MessageView(ctx.guild, donate_url),
             file=gif_file,
         )
     else:
-        await ctx.send(
+        sent = await ctx.send(
             embed=embed,
             view=Set2MessageView(ctx.guild, donate_url),
         )
+
+    remember_set2_message(ctx.channel.id, sent.id)
 
 
 @set2.error
