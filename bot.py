@@ -22,8 +22,8 @@ BASE_DIR = Path(__file__).resolve().parent
 load_dotenv(BASE_DIR / ".env")
 TOKEN = os.getenv("DISCORD_TOKEN", "").strip()
 GUILD_ID = os.getenv("GUILD_ID", "").strip()
-STATUS_TEXT = "ดูดวงกับพ่อหมอป๊อก | /ดูดวง"
-ONLINE_STATUS_TEXT = "พร้อมดูดวง"
+STATUS_TEXT = "พ่อหมอป๊อก | ดูดวงฟรี"
+ONLINE_STATUS_TEXT = "พ่อหมอป๊อก | ดูดวงฟรี"
 OFFLINE_STATUS_TEXT = "ไม่มีอารมณ์ดูดวง"
 FOOTER_TEXT = "ความเชื่อส่วนบุคคล โปรดใช้วิจารณญาณในการอ่าน"
 CACHE_PATH = BASE_DIR / "data" / "daily_cache.json"
@@ -440,17 +440,13 @@ def _guild_emoji_markup(
 
 
 def build_set2_embed(has_attached_gif: bool = False, guild: discord.Guild | None = None) -> discord.Embed:
-    bot_status = (
-        "พร้อมดูดวง"
-        if "bot" in globals() and bot.is_ready()
-        else "ไม่มีอารมณ์ดูดวง"
-    )
+    bot_status = "ดูดวงแบบเจาะลึก ค่าครู 19 บาท"
 
     embed = discord.Embed(
         title="ดูดวงกับพ่อหมอป๊อก 🔮",
         description=(
             "```text\n"
-            f"สถานะ : {bot_status}\n"
+            f"สถานะ   : {bot_status}\n"
             "```"
         ),
         color=PURPLE,
