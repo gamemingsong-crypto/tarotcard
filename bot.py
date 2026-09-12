@@ -464,13 +464,13 @@ def _guild_emoji_markup(
 
 
 def build_set2_embed(has_attached_gif: bool = False, guild: discord.Guild | None = None) -> discord.Embed:
-    bot_status = "ดูดวงแบบเจาะลึก ค่าครู 19 บาท"
+    bot_status = "ดูดวงออนไลน์ สะดวก รวดเร็ว ตอบทุกคำถามที่คุณอยากรู้"
 
     embed = discord.Embed(
         title="ดูดวงกับพ่อหมอป๊อก 🔮",
         description=(
             "```text\n"
-            f"สถานะ   : {bot_status}\n"
+            f"สถานะ:{bot_status}\n"
             "```"
         ),
         color=PURPLE,
